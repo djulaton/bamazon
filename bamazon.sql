@@ -13,7 +13,7 @@ CREATE TABLE products (
 );
 
 INSERT INTO products (product_name, department_name, price, stock_quantity)
-VALUES ("SF Giants Barry Bonds Authentic Jersey (One size fits all)", "Apparel", 300.00, 25);
+VALUES ("SF Giants Barry Bonds Authentic Jersey", "Apparel", 300.00, 25);
 
 INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES ("SF Giants Flip Flops", "Apparel", 20.00, 50);

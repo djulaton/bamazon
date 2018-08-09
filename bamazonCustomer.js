@@ -43,18 +43,35 @@ function queryAllProducts() {
         }
         console.log("-----------------------------------------------------------------------------------");
         // connection.end();
-        shoppingCart();
+        // shoppingCart();
+        greeting();
     });
 };
 
 // Create prompts
+
+var greeting = function() {
+    inquirer.prompt([{
+        name: "yesOrNo",
+        type: "rawlist",
+        message: "Would you like to buy some cool SF Giants gear?",
+        choices: ["HECK YES!", "NO, I'M COOL"]
+    }]).then(function(answer) {
+        if (answer.yesOrNo.toUpperCase() === "HECK YES!") {
+            shoppingCart();
+        } else {
+            connection.end();
+            console.log("Thank you, come again!");
+        } 
+    });
+}
 
 var shoppingCart = function() {
     inquirer.prompt([{
         name: "ProductID",
         type: "input",
         message: "What is the ID of the product you would like to buy?",
-        //Validate: checks weather or not the user typed a response
+        //Validate: checks whether or not the user typed a response
         validate: function(value) {
             if (isNaN(value) == false) {
                 return true;

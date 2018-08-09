@@ -92,7 +92,7 @@ var shoppingCart = function() {
         }
     }]).then(function(answer) {
 
-        var query = 'SELECT * FROM Products WHERE item_id=' + answer.Quantity;
+        var query = 'SELECT * FROM products WHERE item_id=' + answer.ProductID;
         connection.query(query, function(err, res) {
           if (answer.Quantity <= res) {
             for (var i = 0; i < res.length; i++) {

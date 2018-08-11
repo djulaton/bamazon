@@ -7,72 +7,62 @@ var connection = mysql.createConnection({
     port: 3306,
 
     user: "root",
-    password: "mateo",
+    password: "",
     database: "bamazon_db"
 });
 
-//connect to sql database
-
-connection.connect(function(err) {
+//connect to sql database and display greeting message
+connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
-    // afterConnection();
-    queryAllProducts();
-});  
+    greeting();
+});
 
-// function afterConnection() {
-//     connection.query(
-//         "SELECT * FROM products", function(err, res) {
-//             if (err) throw err;
-//             console.log(res);
-//             connection.end();
-//     });
-// }
 
+//Products table that will populate when HECK YES!! is selected
+// shopping cart prompts will appear under table
 function queryAllProducts() {
-    connection.query("SELECT * FROM products", function(err, res) {
+    connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
 
-        console.log("               WELCOME TO THE BAMAZON SF GIANTS DUGOUT STORE!!!              ")
+        console.log("~._.~~._.~'~._.~'WELCOME TO THE BAMAZON SF GIANTS DUGOUT STORE!!!_.~'~._.'~~._.~")
         console.log("===================================================================================");
         console.log("                             List of products                         ");
         console.log("===================================================================================");
 
-        for(var i=0; i < res.length; i++) {
+        for (var i = 0; i < res.length; i++) {
             console.log(res[i].item_id + " | Product name: " + res[i].product_name + " | Department: " + res[i].department_name + " | Price: " + res[i].price + " | Qty: " + res[i].stock_quantity);
         }
         console.log("-----------------------------------------------------------------------------------");
-        // connection.end();
-        // shoppingCart();
-        greeting();
+        shoppingCart();
     });
 };
 
-// Create prompts
-
-var greeting = function() {
+// Create greeting prompt
+var greeting = function () {
     inquirer.prompt([{
         name: "yesOrNo",
         type: "rawlist",
         message: "Would you like to buy some cool SF Giants gear?",
-        choices: ["HECK YES!", "NO, I'M COOL"]
-    }]).then(function(answer) {
-        if (answer.yesOrNo.toUpperCase() === "HECK YES!") {
-            shoppingCart();
+        choices: ["HECK YES!!!!!", "NO, I'M NOT A GIANTS FAN!"]
+    }]).then(function (answer) {
+        if (answer.yesOrNo.toUpperCase() === "HECK YES!!!!!") {
+            queryAllProducts();
         } else {
             connection.end();
             console.log("Thank you, come again!");
-        } 
+        }
     });
 }
 
-var shoppingCart = function() {
+// prompts for user inputs
+var shoppingCart = function () {
     inquirer.prompt([{
         name: "ProductID",
         type: "input",
         message: "What is the ID of the product you would like to buy?",
         //Validate: checks whether or not the user typed a response
-        validate: function(value) {
+        validate: function (value) {
             if (isNaN(value) == false) {
                 return true;
             } else {
@@ -83,39 +73,31 @@ var shoppingCart = function() {
         name: "Quantity",
         type: "input",
         message: "How many would you like to buy?",
-        validate: function(value) {
+        //Validate: checks whether or not the user typed a response
+        validate: function (value) {
             if (isNaN(value) == false) {
                 return true;
             } else {
                 return false;
             }
         }
-    }]).then(function(answer) {
-
+    }]).then(function (answer) {
+        // displays order total and purchase details
         var query = 'SELECT * FROM products WHERE item_id=' + answer.ProductID;
-        connection.query(query, function(err, res) {
-          if (answer.Quantity <= res) {
-            for (var i = 0; i < res.length; i++) {
-                console.log("We currently have " + res[i].stock_quantity + " " + res[i].product_name + ".");
-                console.log("Thank you for your purchase! Your order of Qty. "+ answer.Quantity + " " + res[i].product_name + " is now being processed.");
-              }
+        connection.query(query, function (err, res) {
+            if (answer.Quantity <= res) {
+                for (var i = 0; i < res.length; i++) {
+                    // console.log(JSON.stringify(res[i]));
+                    console.log("Your subtotal is $" + res[i].price * answer.Quantity);
+                    console.log("We currently have " + res[i].stock_quantity + " " + res[i].product_name + ".");
+                    console.log("Thank you for your purchase! Your order of Qty. " + answer.Quantity + " " + res[i].product_name + " will ship in 3-5 business days.");
+                    console.log("===================================================================================");
+                }
             } else {
-              console.log("Not enough of this product in stock.");
+                console.log("Not enough of this product in stock.");
             }
-            queryAllProducts();
+            greeting();
         })
     })
 };
-
-// -- Would you like to shop with us today?
-
-// -- Enter the item number of the product you would like to purchase:
-
-// create input validation for input item number
-
-// -- How many would you like to buy?
-
-// create input validation for how many to buy
-
-// Display total cost
 

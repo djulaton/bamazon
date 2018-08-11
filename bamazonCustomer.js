@@ -47,10 +47,32 @@ var greeting = function () {
         choices: ["HECK YES!!!!!", "NO, I'M NOT A GIANTS FAN!"]
     }]).then(function (answer) {
         if (answer.yesOrNo.toUpperCase() === "HECK YES!!!!!") {
+            console.log("-----------------------------------------------------------------------------------");
             queryAllProducts();
         } else {
             connection.end();
             console.log("Thank you, come again!");
+            console.log("-----------------------------------------------------------------------------------");
+        }
+    });
+}
+
+// At the end of transaction, another prompt will populate asking the customer if they would like to make another purchase
+var endOfTransaction = function () {
+    inquirer.prompt([{
+        name: "yayOrNay",
+        type: "rawlist",
+        message: "Wanna buy some more stuff?",
+        choices: ["YES, TAKE SOME MORE OF MY MONEY!", "NOPE, I'M GOOD"]
+    }]).then(function (answer) {
+        if (answer.yayOrNay.toUpperCase() === "YES, TAKE SOME MORE OF MY MONEY!") {
+            console.log("-----------------------------------------------------------------------------------");
+            queryAllProducts();
+
+        } else {
+            connection.end();
+            console.log("Thanks for shopping at Bamazon SF Giants. Come again!");
+            console.log("-----------------------------------------------------------------------------------");
         }
     });
 }
@@ -69,6 +91,7 @@ var shoppingCart = function () {
                 return false;
             }
         }
+
     }, {
         name: "Quantity",
         type: "input",
@@ -83,20 +106,22 @@ var shoppingCart = function () {
         }
     }]).then(function (answer) {
         // displays order total and purchase details
+
         var query = 'SELECT * FROM products WHERE item_id=' + answer.ProductID;
         connection.query(query, function (err, res) {
-            if (answer.Quantity <= res) {
+            if (answer.Quantity <= res[0].stock_quantity) {
                 for (var i = 0; i < res.length; i++) {
                     // console.log(JSON.stringify(res[i]));
-                    console.log("Your subtotal is $" + res[i].price * answer.Quantity);
-                    console.log("We currently have " + res[i].stock_quantity + " " + res[i].product_name + ".");
-                    console.log("Thank you for your purchase! Your order of Qty. " + answer.Quantity + " " + res[i].product_name + " will ship in 3-5 business days.");
+                    // console.log(res);
+                    console.log("- We currently have " + res[i].stock_quantity + " " + res[i].product_name + ".");
+                    console.log("- Your subtotal is $" + res[i].price * answer.Quantity);
+                    console.log("- Thank you for your purchase! Your order of Qty.(" + answer.Quantity + ") " + res[i].product_name + "(s)" + " will ship in 3-5 business days.");
                     console.log("===================================================================================");
                 }
             } else {
                 console.log("Not enough of this product in stock.");
             }
-            greeting();
+            endOfTransaction();
         })
     })
 };

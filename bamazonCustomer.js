@@ -25,6 +25,8 @@ function queryAllProducts() {
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
 
+        var item_ids = [];
+
         console.log("~._.~~._.~'~._.~'WELCOME TO THE BAMAZON SF GIANTS DUGOUT STORE!!!_.~'~._.'~~._.~")
         console.log("===================================================================================");
         console.log("                             List of products                         ");
@@ -33,8 +35,9 @@ function queryAllProducts() {
         for(var i = 0; i < res.length; i++){
             console.log("ID: " + res[i].item_id + " | " + "Product: " + res[i].product_name + " | " + "Department: " + res[i].department_name + " | " + "Price: " + res[i].price + " | " + "QTY: " + res[i].stock_quantity);
             console.log('--------------------------------------------------------------------------------------------------')
+            item_ids.push(res[i].item_id);
           }
-        shoppingCart();
+        shoppingCart(item_ids);
     });
 };
 
@@ -78,14 +81,15 @@ var endOfTransaction = function () {
 }
 
 // prompts for user inputs
-var shoppingCart = function () {
+var shoppingCart = function (item_ids) {
     inquirer.prompt([{
         name: "ProductID",
         type: "input",
         message: "What is the ID of the product you would like to buy?",
         //Validate: checks whether or not the user typed a response
         validate: function (value) {
-            if (isNaN(value) == false) {
+            // console.log(item_ids);
+            if (isNaN(value) == false && item_ids.indexOf(parseInt(value)) !== -1) {
                 return true;
             } else {
                 return false;

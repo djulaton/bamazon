@@ -30,10 +30,10 @@ function queryAllProducts() {
         console.log("                             List of products                         ");
         console.log("===================================================================================");
 
-        for (var i = 0; i < res.length; i++) {
-            console.log(res[i].item_id + " | Product name: " + res[i].product_name + " | Department: " + res[i].department_name + " | Price: " + res[i].price + " | Qty: " + res[i].stock_quantity);
-        }
-        console.log("-----------------------------------------------------------------------------------");
+        for(var i = 0; i < res.length; i++){
+            console.log("ID: " + res[i].item_id + " | " + "Product: " + res[i].product_name + " | " + "Department: " + res[i].department_name + " | " + "Price: " + res[i].price + " | " + "QTY: " + res[i].stock_quantity);
+            console.log('--------------------------------------------------------------------------------------------------')
+          }
         shoppingCart();
     });
 };
